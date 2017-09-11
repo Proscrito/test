@@ -1,0 +1,102 @@
+﻿@model yamvc.Models.WelcomeModel
+
+@{
+    Layout = "_Layout";
+}
+
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">yamvc</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Welcome</a></li>
+            <li>@Html.ActionLink("Log out", "SignOut", "Account")</li>
+        </ul>
+    </div>
+</nav>
+<div class="container">
+    <h2>Welcome @Model.Login</h2>
+
+    @if (Model.IsAdmin)
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Role</th>
+                    <th>Log out</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model.LoggedInUsers)
+                {
+                    <tr id="@user.Login">
+                        <td>@user.Login</td>
+                        <td>@user.Role</td>
+                        <td><a href="#" id="logOut" socket="@user.SocketId">Log Out user</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+@if (Model.IsAdmin)
+{
+    <script>
+        $(function() {
+            var uri = "ws://" + window.location.host + "/ws";
+            var socket = new WebSocket(uri);
+
+            $('table').on('click', 'a#logOut', function(e) {
+                var login = $(this).attr('socket');
+                socket.send(login);
+                $(this).closest('tr').remove();
+            });
+
+            socket.onmessage = function (event) {
+                var user = $.parseJSON(event.data);
+                console.log(user);
+
+                if (user) {
+                    var row = $('table tr#' + user.Login);
+
+                    if (row.length > 0) {
+                        row.find('td#socket').html(user.SocketId).html(user.SocketId);
+                    } else {
+                        $('table tr:last').after('<tr id="' +
+                            user.Login + '"><td>' +
+                            user.Login + '</td><td>' +
+                            user.Role + '</td><td><a href="#" id="logOut" socket="' +
+                            user.SocketId + '">Log Out user</a></td></tr>');
+                    }
+                }
+            };
+
+            $(window).on('beforeunload', function(){
+                socket.close();
+            });
+        });
+    </script>
+}
+else
+{
+    <script>
+        $(function() {
+            var uri = "ws://" + window.location.host + "/ws";
+            var socket = new WebSocket(uri);
+          
+            socket.onmessage = function (event) {
+                if (event.data && event.data === "logout") {
+                    alert("you have been kicked off");
+                    window.location = "/Account/SignOut";
+                }
+            };
+
+            $(window).on('beforeunload', function(){
+                socket.close();
+            });
+        });
+    </script>
+}
