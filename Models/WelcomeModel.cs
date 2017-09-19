@@ -7,6 +7,7 @@ namespace yamvc.Models
     {
         public string Login { get; set; }
         public bool IsAdmin { get; set; }
+        public string Data { get; set; }
         public IEnumerable<ExtendedUserModel> LoggedInUsers => UserManager.Instance.GetLoggedInUsers();
     }
 }

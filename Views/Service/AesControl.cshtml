@@ -1,0 +1,10 @@
+﻿@model yamvc.Models.WelcomeModel
+    
+<form action="/Service/AesProcess" method="post">
+    <div class="form-group">
+        <label for="data">Email address</label>
+        <input type="text" class="form-control" id="data" name="data" aria-describedby="dataHelp" placeholder="Enter text">
+        <small id="dataHelp" class="form-text text-muted">Please input some text.</small>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>

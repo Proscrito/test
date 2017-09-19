@@ -42,14 +42,18 @@
     }
 </div>
 
+<h1>@Model.Data</h1>
+
+@{ Html.RenderPartial("AesControl"); }
+
 @if (Model.IsAdmin)
 {
     <script>
-        $(function() {
+        $(function () {
             var uri = "ws://" + window.location.host + "/ws";
             var socket = new WebSocket(uri);
 
-            $('table').on('click', 'a#logOut', function(e) {
+            $('table').on('click', 'a#logOut', function (e) {
                 var login = $(this).attr('socket');
                 socket.send(login);
                 $(this).closest('tr').remove();
@@ -74,7 +78,7 @@
                 }
             };
 
-            $(window).on('beforeunload', function(){
+            $(window).on('beforeunload', function () {
                 socket.close();
             });
         });
@@ -83,10 +87,10 @@
 else
 {
     <script>
-        $(function() {
+        $(function () {
             var uri = "ws://" + window.location.host + "/ws";
             var socket = new WebSocket(uri);
-          
+
             socket.onmessage = function (event) {
                 if (event.data && event.data === "logout") {
                     alert("you have been kicked off");
@@ -94,7 +98,7 @@ else
                 }
             };
 
-            $(window).on('beforeunload', function(){
+            $(window).on('beforeunload', function () {
                 socket.close();
             });
         });
